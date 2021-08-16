@@ -10,13 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BookResponseDto {
-
-    private String name;
-    private String description;
-    private String author;
-    private String bookType;
-    private double price;
-    private String isbn;
-
+public class PayableAmount {
+    private double amountToPay;
+    private String discount;
 }

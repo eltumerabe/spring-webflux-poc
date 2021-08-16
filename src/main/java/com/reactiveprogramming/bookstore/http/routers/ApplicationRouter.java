@@ -21,7 +21,7 @@ public class ApplicationRouter {
                 .andRoute(PUT("/books").and(accept(MediaType.APPLICATION_JSON)), applicationHandler::updateBook)
                 .andRoute(DELETE("/books/{isbn}").and(accept(MediaType.APPLICATION_JSON)), applicationHandler::deleteBook)
                 .andRoute(GET("/books/{isbn}").and(accept(MediaType.APPLICATION_JSON)), applicationHandler::getBook)
-                .andRoute(GET("/books").and(accept(MediaType.APPLICATION_JSON)), applicationHandler::getBooks);
+                .andRoute(GET("/books").and(accept(MediaType.APPLICATION_JSON)), applicationHandler::getBooks)
+                .andRoute(POST("/books/checkout").and(accept(MediaType.APPLICATION_JSON)), applicationHandler::checkout);
     }
-
 }

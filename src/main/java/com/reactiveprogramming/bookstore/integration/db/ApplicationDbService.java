@@ -45,14 +45,10 @@ public class ApplicationDbService {
                 .flatMap(bookDocument -> Mono.empty());
     }
 
-    public Mono<BookResponseDto> updateBook(final BookRequestDto bookRequestDto) {
-        Optional
-                .ofNullable(bookRequestDto.getIsbn())
-                .orElseThrow(() -> new RuntimeException("ISBN is mandatory to modify the Book object"));
-        return Mono
-                .just(bookRequestDto)
+    public Mono<BookResponseDto> updateBook(final Mono<BookRequestDto> bookRequestDto) {
+        return bookRequestDto
                 .map(bookRequestDtoToBookDocumentConverter)
-                .flatMap(bookDocument -> bookDocumentRepository.save(bookDocument))
+                .flatMap(bookDocumentRepository::save)
                 .map(bookDocumentToBookResponseDtoConverter);
     }
 

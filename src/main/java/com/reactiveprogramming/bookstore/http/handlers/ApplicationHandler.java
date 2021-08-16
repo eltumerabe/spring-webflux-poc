@@ -1,9 +1,11 @@
 package com.reactiveprogramming.bookstore.http.handlers;
 
-import com.reactiveprogramming.bookstore.domain.conversion.ServerRequestToBookRequestDtoConverter;
 import com.reactiveprogramming.bookstore.domain.conversion.ServerRequestToPathVariableConverter;
+import com.reactiveprogramming.bookstore.domain.dto.service.BookRequestDto;
 import com.reactiveprogramming.bookstore.domain.dto.service.BookResponseDto;
+import com.reactiveprogramming.bookstore.domain.dto.service.PayableAmount;
 import com.reactiveprogramming.bookstore.processor.BookStoreProcessor;
+import com.reactiveprogramming.bookstore.util.RequestBodySerializerUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -16,18 +18,18 @@ import reactor.core.publisher.Mono;
 public class ApplicationHandler {
 
     private final BookStoreProcessor bookStoreProcessor;
-    private final ServerRequestToBookRequestDtoConverter serverRequestToBookRequestDtoConverter;
     private final ServerRequestToPathVariableConverter serverRequestToPathVariableConverter;
+    private final RequestBodySerializerUtil requestBodySerializerUtil;
 
     public Mono<ServerResponse> createBook(final ServerRequest serverRequest) {
         return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
-                .body(bookStoreProcessor.createBook(serverRequestToBookRequestDtoConverter.apply(serverRequest)), BookResponseDto.class);
+                .body(bookStoreProcessor.createBook(requestBodySerializerUtil.bodyToMono(serverRequest, BookRequestDto.class)), BookResponseDto.class);
     }
 
     public Mono<ServerResponse> updateBook(final ServerRequest serverRequest) {
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(bookStoreProcessor.updateBook(serverRequestToBookRequestDtoConverter.apply(serverRequest)), BookResponseDto.class);
+                .body(bookStoreProcessor.updateBook(requestBodySerializerUtil.bodyToMono(serverRequest, BookRequestDto.class)), BookResponseDto.class);
     }
 
     public Mono<ServerResponse> deleteBook(final ServerRequest serverRequest) {
@@ -46,5 +48,11 @@ public class ApplicationHandler {
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(bookStoreProcessor.getBooks(), BookResponseDto.class);
+    }
+
+    public Mono<ServerResponse> checkout(final ServerRequest serverRequest) {
+        return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(bookStoreProcessor.checkout(requestBodySerializerUtil.bodyToFlux(serverRequest, BookRequestDto.class), null), PayableAmount.class);
     }
 }
